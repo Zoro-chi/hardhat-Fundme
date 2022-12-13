@@ -4,8 +4,11 @@ pragma solidity ^0.8.8;
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "./PriceConverter.sol";
 
-error NotOwner();
+error FundMe__NotOwner();
 
+/** @title A crowd funding contract
+ * @author Zoro-chi
+ */
 contract FundMe {
     using PriceConverter for uint256;
 
@@ -23,17 +26,16 @@ contract FundMe {
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
-    function fund() public payable {
-        require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "You need to spend more ETH!");
-        // require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "You need to spend more ETH!");
-        addressToAmountFunded[msg.sender] += msg.value;
-        funders.push(msg.sender);
-    }
-    
     modifier onlyOwner {
         // require(msg.sender == owner);
-        if (msg.sender != i_owner) revert NotOwner();
+        if (msg.sender != i_owner) revert FundMe__NotOwner();
         _;
+    }
+
+    function fund() public payable {
+        require(msg.value.getConversionRate(priceFeed) >= MINIMUM_USD, "You need to spend more ETH!");
+        addressToAmountFunded[msg.sender] += msg.value;
+        funders.push(msg.sender);
     }
     
     function withdraw() public onlyOwner {

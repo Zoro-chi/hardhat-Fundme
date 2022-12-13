@@ -8,13 +8,16 @@ import "solidity-coverage";
 import "hardhat-deploy";
 
 const config: HardhatUserConfig = {
-	solidity: "0.8.8",
+	solidity: {
+		compilers: [{ version: "0.8.8" }, { version: "0.6.6" }],
+	},
 	defaultNetwork: "hardhat",
 	networks: {
 		goerli: {
 			url: process.env.GOERLI_RPC_URL || "https://eth-goreli/example",
 			accounts: [process.env.GOERLI_PRIVATE_KEY || "0xkey"],
 			chainId: 5,
+			// blockConfirmations: 6,
 		},
 		// * RUNNING HARDHAT NETWORK ON LOCALHOST SERVER
 		localhost: {
@@ -27,7 +30,7 @@ const config: HardhatUserConfig = {
 		apiKey: process.env.ETHERSCAN_API_KEY || "key",
 	},
 	gasReporter: {
-		enabled: true,
+		enabled: false,
 		outputFile: "gas-report.txt",
 		noColors: true,
 		currency: "USD",
